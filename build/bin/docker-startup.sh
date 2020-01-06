@@ -15,6 +15,7 @@ set -x
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/,${BASE_DIR}/init.d/
 export CUSTOM_SEARCH_NAMES="application,custom"
+export NACOS_SERVERS=`nslookup $SERVICE_NAME | grep Address | grep -v 53 | awk '{print $2}' | sed -r "s/(.*)/\1:8848/" | tr "\n" " "`
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers(){
    if [[ ! -d "${PLUGINS_DIR}" ]]; then

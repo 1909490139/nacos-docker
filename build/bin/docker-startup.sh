@@ -38,39 +38,39 @@ if [[ "${MODE}" == "standalone" ]]; then
 else
   case ${MEMORY_SIZE:-small} in
     "micro")
-      JAVA_OPT="${JAVA_OPT} -server -Xms90m -Xmx90m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms90m -Xmx90m -Xmn45m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 128M Memory...." >&2
       ;;
     "small")
-      JAVA_OPT="${JAVA_OPT} -server -Xms180m -Xmx180m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms180m -Xmx180m -Xmn90m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 256M Memory...." >&2
       ;;
     "medium")
-      JAVA_OPT="${JAVA_OPT} -server -Xms360m -Xmx360m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms360m -Xmx360m -Xmn180m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 512M Memory...." >&2
       ;;
     "large")
-      JAVA_OPT="${JAVA_OPT} -server -Xms720m -Xmx720m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms720m -Xmx720m -Xmn360m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 1G Memory...." >&2
       ;;
     "2xlarge")
-      JAVA_OPT="${JAVA_OPT} -server -Xms1420m -Xmx1420m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms1420m -Xmx1420m -Xmn710m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 2G Memory...." >&2
       ;;
     "4xlarge")
-      JAVA_OPT="${JAVA_OPT} -server -Xms2840m -Xmx2840m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms2840m -Xmx2840m -Xmn1420m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 4G Memory...." >&2
       ;;
     "8xlarge")
-      JAVA_OPT="${JAVA_OPT} -server -Xms5680m -Xmx5680m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms5680m -Xmx5680m -Xmn2840m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 8G Memory...." >&2
       ;;
     16xlarge|32xlarge|64xlarge)
-      JAVA_OPT="${JAVA_OPT} -server -Xms8G -Xmx8G -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms8G -Xmx8G -Xmn4G -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for biger Memory...." >&2
       ;;
     *)
-      JAVA_OPT="${JAVA_OPT} -server -Xms128m -Xmx128m -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      JAVA_OPT="${JAVA_OPT} -server -Xms128m -Xmx128m -Xmn64m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
       echo "Optimizing java process for 256M Memory...." >&2
       ;;
   esac

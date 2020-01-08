@@ -15,13 +15,13 @@ set -x
 export DEFAULT_SEARCH_LOCATIONS="classpath:/,classpath:/config/,file:./,file:./config/"
 export CUSTOM_SEARCH_LOCATIONS=${DEFAULT_SEARCH_LOCATIONS},file:${BASE_DIR}/conf/,${BASE_DIR}/init.d/
 export CUSTOM_SEARCH_NAMES="application,custom"
-export NACOS_SERVERS=`nslookup $SERVICE_NAME | grep Address | grep -v 53 | awk '{print $2}' | sed -r "s/(.*)/\1:8848/" | tr "\n" " "`
+export CLUSTER_NUM=$[$SERVICE_POD_NUM - 1]
 PLUGINS_DIR="/home/nacos/plugins/peer-finder"
 function print_servers(){
    if [[ ! -d "${PLUGINS_DIR}" ]]; then
     echo "" > "$CLUSTER_CONF"
-    for server in ${NACOS_SERVERS}; do
-            echo "$server" >> "$CLUSTER_CONF"
+    for i in $(seq 0 $CLUSTER_NUM );do
+	echo $SERVICE_NAME-$i.$SERVICE_NAME.$TENANT_ID.svc.cluster.local.:8848 >> "$CLUSTER_CONF"
     done
    else
     bash $PLUGINS_DIR/plugin.sh
@@ -31,13 +31,49 @@ function print_servers(){
 #===========================================================================================
 # JVM Configuration
 #===========================================================================================
+[[ "${SERVICE_POD_NUM}" == 1 ]] && export MODE=standalone
 if [[ "${MODE}" == "standalone" ]]; then
-
     JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
     JAVA_OPT="${JAVA_OPT} -Dnacos.standalone=true"
 else
-
-  JAVA_OPT="${JAVA_OPT} -server -Xms${JVM_XMS} -Xmx${JVM_XMX} -Xmn${JVM_XMN} -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+  case ${MEMORY_SIZE:-small} in
+    "micro")
+      JAVA_OPT="${JAVA_OPT} -server -Xms90m -Xmx90m -Xmn45m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 128M Memory...." >&2
+      ;;
+    "small")
+      JAVA_OPT="${JAVA_OPT} -server -Xms180m -Xmx180m -Xmn90m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 256M Memory...." >&2
+      ;;
+    "medium")
+      JAVA_OPT="${JAVA_OPT} -server -Xms360m -Xmx360m -Xmn180m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 512M Memory...." >&2
+      ;;
+    "large")
+      JAVA_OPT="${JAVA_OPT} -server -Xms720m -Xmx720m -Xmn360m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 1G Memory...." >&2
+      ;;
+    "2xlarge")
+      JAVA_OPT="${JAVA_OPT} -server -Xms1420m -Xmx1420m -Xmn710m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 2G Memory...." >&2
+      ;;
+    "4xlarge")
+      JAVA_OPT="${JAVA_OPT} -server -Xms2840m -Xmx2840m -Xmn1420m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 4G Memory...." >&2
+      ;;
+    "8xlarge")
+      JAVA_OPT="${JAVA_OPT} -server -Xms5680m -Xmx5680m -Xmn2840m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 8G Memory...." >&2
+      ;;
+    16xlarge|32xlarge|64xlarge)
+      JAVA_OPT="${JAVA_OPT} -server -Xms8G -Xmx8G -Xmn4G -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for biger Memory...." >&2
+      ;;
+    *)
+      JAVA_OPT="${JAVA_OPT} -server -Xms128m -Xmx128m -Xmn64m -XX:MetaspaceSize=${JVM_MS} -XX:MaxMetaspaceSize=${JVM_MMS}"
+      echo "Optimizing java process for 256M Memory...." >&2
+      ;;
+  esac
   if [[ "${NACOS_DEBUG}" == "y" ]]; then
     JAVA_OPT="${JAVA_OPT} -Xdebug -Xrunjdwp:transport=dt_socket,address=9555,server=y,suspend=n"
   fi
